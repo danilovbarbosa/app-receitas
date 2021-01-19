@@ -1,3 +1,7 @@
 from django.contrib import admin
 
-# Register your models here.
+from receitas.models import Receita
+
+@admin.register(Receita)
+class ReceitaAdmin(admin.ModelAdmin):
+    pass
