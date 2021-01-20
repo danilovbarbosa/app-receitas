@@ -128,3 +128,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'alura_receita/static'),
 ]
+
+# Media
+MEDIA_ROOT = os.path(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
