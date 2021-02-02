@@ -2,23 +2,23 @@ from datetime import time
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
-from django.contrib import auth
+from django.contrib import auth, messages
 
 from receitas.models import Receita
 
 
-def validar_nome_email(nome, email):
+def validar_nome_email(request, nome, email):
     if not nome.strip():
-        print('O campo não pode ficar em branco.')
+        messages.error(request, 'O campo nome não pode ficar em branco.')
         return redirect('cadastro')
 
     if not email.strip():
-        print('O campo não pode ficar em branco.')
+        messages.error(request, 'O campo e-mail não pode ficar em branco.')
         return redirect('cadastro')
 
-def verificar_igualdade_da_senha(password, password2):
+def verificar_igualdade_da_senha(request, password, password2):
     if password != password2:
-        print('As senhas não iguais.')
+        messages.error(request, 'As senhas não iguais.')
         return redirect('cadastro')
 
 def verificar_se_usuario_ja_cadastrado(email):
@@ -34,13 +34,13 @@ def cadastro(request):
         password = request.POST['password']
         password2 = request.POST['password2']
 
-        validar_nome_email(nome, email)
-        verificar_igualdade_da_senha(password, password2)
+        validar_nome_email(request, nome, email)
+        verificar_igualdade_da_senha(request, password, password2)
         verificar_se_usuario_ja_cadastrado(email)
 
         usuario: User = User.objects.create_user(username=nome, email=email, password=password)
         usuario.save()
-
+        messages.success(request, 'Usuário cadastrado com sucesso!')
         return redirect('login')
     context = {}
     return render(request, 'usuarios/cadastro.html', context=context)
