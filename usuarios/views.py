@@ -19,13 +19,25 @@ def validar_se_nome_email_estao_vazios(request, nome, email):
 def verificar_igualdade_da_senha(request, password, password2):
     if password != password2:
         messages.error(request, 'As senhas não iguais.')
-        return redirect('cadastro')
+        return True
 
-def verificar_se_usuario_ja_cadastrado(email):
+def verificar_se_usuario_ja_cadastrado(request, email, nome):
     if User.objects.filter(email=email).exists():
-        print('Usuário já cadastrado.')
-        return redirect('cadastro')
+        messages.error(request, 'Usuário já cadastrado com este e-mail.')
+        return True
 
+    if User.objects.filter(username=nome).exists():
+        messages.error(request, 'Usuário já cadastrado.')
+        return True
+
+
+def validar_dados(request, nome, email, password, password2):
+    if (
+            validar_se_nome_email_estao_vazios(request, nome, email) or
+            verificar_igualdade_da_senha(request, password, password2) or
+            verificar_se_usuario_ja_cadastrado(request, email, nome)
+    ):
+        return True
 
 def cadastro(request):
     if request.method == 'POST':
@@ -34,11 +46,8 @@ def cadastro(request):
         password = request.POST['password']
         password2 = request.POST['password2']
 
-        if validar_se_nome_email_estao_vazios(request, nome, email):
+        if validar_dados(request, nome, email, password, password2):
             return redirect('cadastro')
-
-        verificar_igualdade_da_senha(request, password, password2)
-        verificar_se_usuario_ja_cadastrado(email)
 
         usuario: User = User.objects.create_user(username=nome, email=email, password=password)
         usuario.save()
