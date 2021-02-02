@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
 
 def validar_nome_email(nome, email):
     if not nome.strip():
@@ -39,11 +40,27 @@ def cadastro(request):
     context = {}
     return render(request, 'usuarios/cadastro.html', context=context)
 
-def login(request):
-    context = {
 
-    }
-    return render(request, 'usuarios/login.html', context=context)
+def verificar_se_email_e_password_estao_em_branco(email, password):
+    if email == '' or password == '':
+        return redirect('login')
+
+    else:
+        return redirect('dashboard')
+
+
+def login(request):
+    if request.method == 'POST':
+        email = request.POST['email']
+        password = request.POST['senha']
+
+        if email == '' or password == '':
+            return redirect('login')
+
+        else:
+            return redirect('dashboard')
+
+    return render(request, 'usuarios/login.html')
 
 def dashboard(request):
     context = {
