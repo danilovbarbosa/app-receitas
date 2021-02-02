@@ -7,14 +7,14 @@ from django.contrib import auth, messages
 from receitas.models import Receita
 
 
-def validar_nome_email(request, nome, email):
+def validar_se_nome_email_estao_vazios(request, nome, email):
     if not nome.strip():
         messages.error(request, 'O campo nome não pode ficar em branco.')
-        return redirect('cadastro')
+        return True
 
     if not email.strip():
         messages.error(request, 'O campo e-mail não pode ficar em branco.')
-        return redirect('cadastro')
+        return True
 
 def verificar_igualdade_da_senha(request, password, password2):
     if password != password2:
@@ -34,7 +34,9 @@ def cadastro(request):
         password = request.POST['password']
         password2 = request.POST['password2']
 
-        validar_nome_email(request, nome, email)
+        if validar_se_nome_email_estao_vazios(request, nome, email):
+            return redirect('cadastro')
+
         verificar_igualdade_da_senha(request, password, password2)
         verificar_se_usuario_ja_cadastrado(email)
 
