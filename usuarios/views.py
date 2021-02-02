@@ -73,9 +73,8 @@ def dashboard(request):
     }
     return render(request, 'usuarios/dashboard.html', context=context)
 
-def logout(request):
-    context = {
 
-    }
-    return render(request, 'usuarios/cadastro.html', context=context)
+def logout(request):
+    auth.logout(request)
+    return redirect('index')
 
