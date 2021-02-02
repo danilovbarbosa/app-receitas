@@ -73,7 +73,8 @@ def login(request):
 
 def dashboard(request):
     if request.user.is_authenticated:
-        receitas = Receita.objects.all()
+        id = request.user.id
+        receitas = Receita.objects.order_by('-data_receita').filter(pessoa=id)
         context = {
             'receitas': receitas,
         }
