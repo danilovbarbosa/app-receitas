@@ -1,6 +1,10 @@
-from django.shortcuts import render, redirect
+from datetime import time
+
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib import auth
+
+from receitas.models import Receita
 
 
 def validar_nome_email(nome, email):
@@ -68,13 +72,44 @@ def login(request):
     return render(request, 'usuarios/login.html')
 
 def dashboard(request):
-    context = {
-
-    }
-    return render(request, 'usuarios/dashboard.html', context=context)
+    if request.user.is_authenticated:
+        receitas = Receita.objects.all()
+        context = {
+            'receitas': receitas,
+        }
+        return render(request, 'usuarios/dashboard.html', context=context)
+    else:
+        return redirect('login')
 
 
 def logout(request):
     auth.logout(request)
     return redirect('index')
 
+
+def cria_receita(request):
+    if request.method == 'POST':
+        user = get_object_or_404(User, pk=request.user.id)
+        nome_receita = request.POST['nome_receita']
+        ingredientes = request.POST['ingredientes']
+        modo_preparo = request.POST['modo_preparo']
+        tempo_preparo = request.POST['tempo_preparo']
+        rendimento = request.POST['rendimento']
+        categoria = request.POST['categoria']
+        foto_receita = request.FILES['foto_receita']
+
+        receita = Receita.objects.create(
+            pessoa=user,
+            nome_receita=nome_receita,
+            ingredientes=ingredientes,
+            modo_preparo=modo_preparo,
+            tempo_de_preparo=tempo_preparo,
+            rendimento=rendimento,
+            categoria=categoria,
+            foto_receita=foto_receita,
+            publicada=True,
+        )
+
+        return redirect('dashboard')
+
+    return render(request, 'usuarios/cria_receita.html')
