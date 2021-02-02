@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate
+from django.contrib import auth
+
 
 def validar_nome_email(nome, email):
     if not nome.strip():
@@ -57,8 +58,12 @@ def login(request):
         if email == '' or password == '':
             return redirect('login')
 
-        else:
-            return redirect('dashboard')
+        if User.objects.filter(email=email).exists():
+            nome = User.objects.filter(email=email).values_list('username', flat=True).get()
+            user = auth.authenticate(request, username=nome, password=password)
+            if user is not None:
+                auth.login(request, user)
+                return redirect('dashboard')
 
     return render(request, 'usuarios/login.html')
 
