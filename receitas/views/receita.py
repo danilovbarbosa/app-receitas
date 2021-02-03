@@ -25,22 +25,6 @@ def receita(request, receita_id):
     return render(request, 'receitas/receita.html', receita_a_exibir)
 
 
-def buscar(request):
-    lista_receitas = Receita.objects.order_by('-data_receita').filter(publicada=True)
-
-    if 'buscar' in request.GET:
-        nome_a_buscar = request.GET['buscar']
-
-        if buscar:
-            lista_receitas = lista_receitas.filter(nome_receita__icontains=nome_a_buscar)
-
-    context: dict = {
-        'receitas': lista_receitas,
-    }
-
-    return render(request, 'receitas/buscar.html', context=context)
-
-
 def cria_receita(request):
     if request.method == 'POST':
         user = get_object_or_404(User, pk=request.user.id)
