@@ -149,4 +149,18 @@ def edita_receita(request, receita_id):
 
 
 def atualiza_receita(request):
-    pass
+    if request.method == 'POST':
+        receita_id = request.POST['receita_id']
+        receita = Receita.objects.get(pk=receita_id)
+        receita.nome_receita = request.POST['nome_receita']
+        receita.ingredientes = request.POST['ingredientes']
+        receita.modo_preparo = request.POST['modo_preparo']
+        receita.tempo_de_preparo = request.POST['tempo_preparo']
+        receita.rendimento = request.POST['rendimento']
+        receita.categoria = request.POST['categoria']
+        if 'foto_receita' in request.FILES:
+            receita.foto_receita = request.FILES['foto_receita']
+
+        receita.save()
+
+        return redirect('dashboard')
