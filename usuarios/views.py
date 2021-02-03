@@ -16,10 +16,12 @@ def validar_se_nome_email_estao_vazios(request, nome, email):
         messages.error(request, 'O campo e-mail não pode ficar em branco.')
         return True
 
+
 def verificar_igualdade_da_senha(request, password, password2):
     if password != password2:
         messages.error(request, 'As senhas não iguais.')
         return True
+
 
 def verificar_se_usuario_ja_cadastrado(request, email, nome):
     if User.objects.filter(email=email).exists():
@@ -39,6 +41,7 @@ def validar_dados(request, nome, email, password, password2):
     ):
         return True
 
+
 def cadastro(request):
     if request.method == 'POST':
         nome = request.POST['nome']
@@ -57,12 +60,14 @@ def cadastro(request):
     return render(request, 'usuarios/cadastro.html', context=context)
 
 
-def verificar_se_email_e_password_estao_em_branco(email, password):
-    if email == '' or password == '':
-        return redirect('login')
+def verificar_se_email_e_password_estao_em_branco(request, email, password):
+    if email == '':
+        messages.error(request, 'O campo e-mail não pode ficar em branco.')
+        return True
 
-    else:
-        return redirect('dashboard')
+    if password == '':
+        messages.error(request, 'O campo password não pode ficar em branco.')
+        return True
 
 
 def login(request):
@@ -70,7 +75,7 @@ def login(request):
         email = request.POST['email']
         password = request.POST['senha']
 
-        if email == '' or password == '':
+        if verificar_se_email_e_password_estao_em_branco(request, email, password):
             return redirect('login')
 
         if User.objects.filter(email=email).exists():
@@ -81,6 +86,7 @@ def login(request):
                 return redirect('dashboard')
 
     return render(request, 'usuarios/login.html')
+
 
 def dashboard(request):
     if request.user.is_authenticated:
@@ -125,3 +131,8 @@ def cria_receita(request):
         return redirect('dashboard')
 
     return render(request, 'usuarios/cria_receita.html')
+
+def deleta_receita(request, receita_id):
+    receita = get_object_or_404(Receita, pk=receita_id)
+    receita.delete()
+    return redirect('dashboard')
