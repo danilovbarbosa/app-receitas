@@ -6,6 +6,13 @@ from receitas.models import Receita
 
 
 def validar_se_nome_email_estao_vazios(request, nome, email):
+    '''
+    Valida se nome e e-mail estão vazios.
+    :param request: requisão HTTP.
+    :param nome: string.
+    :param email: string.
+    :return: Rertonar True se o nome ou e-mail forem vázios.
+    '''
     if not nome.strip():
         messages.error(request, 'O campo nome não pode ficar em branco.')
         return True
@@ -16,12 +23,26 @@ def validar_se_nome_email_estao_vazios(request, nome, email):
 
 
 def verificar_igualdade_da_senha(request, password, password2):
+    '''
+    Verifca se duas strings (neste caso senhas) são diferentes.
+    :param request: requisão HTTP.
+    :param password: string.
+    :param password2: string.
+    :return: Retornar True se senhas forem diferentes.
+    '''
     if password != password2:
         messages.error(request, 'As senhas não iguais.')
         return True
 
 
 def verificar_se_usuario_ja_cadastrado(request, email, nome):
+    '''
+    Verifica se o e-mail ou o nome submetidos já estão vinculados a um usuário cadastrado no BD.
+    :param request: requisão HTTP.
+    :param email: string.
+    :param nome: sting.
+    :return: Rertonar True se o e-mail ou nome estiverem vinculados a um usuário cadastrado no BD.
+    '''
     if User.objects.filter(email=email).exists():
         messages.error(request, 'Usuário já cadastrado com este e-mail.')
         return True
@@ -32,6 +53,15 @@ def verificar_se_usuario_ja_cadastrado(request, email, nome):
 
 
 def validar_dados(request, nome, email, password, password2):
+    '''
+    Executa um conjunto de verificações para validar os dados de nome, email, password, password2.
+    :param request: requisão HTTP.
+    :param nome: string.
+    :param email: string.
+    :param password: string.
+    :param password2: string.
+    :return: Retorna True se nome, email, password, password2 forem todos validados.
+    '''
     if (
             validar_se_nome_email_estao_vazios(request, nome, email) or
             verificar_igualdade_da_senha(request, password, password2) or
@@ -41,6 +71,11 @@ def validar_dados(request, nome, email, password, password2):
 
 
 def cadastro(request):
+    '''
+    Cadastra um usuário no sistema.
+    :param request: requisão HTTP.
+    :return: redirect('cadastro') ou redirect('login') ou render(request, 'usuarios/cadastro.html', context=context)
+    '''
     if request.method == 'POST':
         nome = request.POST['nome']
         email = request.POST['email']
