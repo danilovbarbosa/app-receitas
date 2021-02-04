@@ -6,6 +6,11 @@ from receitas.models import Receita
 
 
 def index(request):
+    '''
+    Coleta as receitas no BD e apresenta na Index.
+    :param request: requisição HTTP.
+    :return: render(request, 'receitas/index.html', context=context)
+    '''
     receitas = Receita.objects.order_by('-data_receita').filter(publicada=True)
     paginator = Paginator(receitas, 6)
     page = request.GET.get('page')
@@ -19,6 +24,12 @@ def index(request):
 
 
 def receita(request, receita_id):
+    '''
+    Carrega a receita escolhida pelo usuário e apresenta em uma página todos o seu detalhes.
+    :param request: requisição HTTP.
+    :param receita_id: int.
+    :return: render(request, 'receitas/receita.html', receita_a_exibir)
+    '''
     receita = get_object_or_404(Receita, pk=receita_id)
 
     receita_a_exibir = {
@@ -29,6 +40,11 @@ def receita(request, receita_id):
 
 
 def cria_receita(request):
+    '''
+    Recebe do formulário um conjunto de dados e cria um novo objeto de Receita e salva ele no BD.
+    :param request: requisição HTTP.
+    :return: redirect('dashboard') ou render(request, 'receitas/cria_receita.html')
+    '''
     if request.method == 'POST':
         user = get_object_or_404(User, pk=request.user.id)
         nome_receita = request.POST['nome_receita']
@@ -57,12 +73,24 @@ def cria_receita(request):
 
 
 def deleta_receita(request, receita_id):
+    '''
+    Deleta do BD a receita indicada no receita_id.
+    :param request: requisição HTTP.
+    :param receita_id: int.
+    :return: redirect('dashboard').
+    '''
     receita = get_object_or_404(Receita, pk=receita_id)
     receita.delete()
     return redirect('dashboard')
 
 
 def edita_receita(request, receita_id):
+    '''
+    Edita uma receita selecionada de acordo com receita_id.
+    :param request: requisição HTTP.
+    :param receita_id: int.
+    :return: render(request, 'receitas/edita_receita.html', context=context).
+    '''
     receita = get_object_or_404(Receita, pk=receita_id)
     context = {
         'receita': receita,
@@ -72,6 +100,11 @@ def edita_receita(request, receita_id):
 
 
 def atualiza_receita(request):
+    '''
+    Atualiza a receita com os dados coletados do formulário.
+    :param request: requisição HTTP.
+    :return: redirect('dashboard').
+    '''
     if request.method == 'POST':
         receita_id = request.POST['receita_id']
         receita = Receita.objects.get(pk=receita_id)

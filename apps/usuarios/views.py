@@ -94,6 +94,13 @@ def cadastro(request):
 
 
 def verificar_se_email_e_password_estao_em_branco(request, email, password):
+    '''
+    Verifica se e-mail e password são strings vazias.
+    :param request: requisião HTTP.
+    :param email: string.
+    :param password: string.
+    :return: Retorna True se email ou password forem strings vazias.
+    '''
     if email == '':
         messages.error(request, 'O campo e-mail não pode ficar em branco.')
         return True
@@ -104,6 +111,11 @@ def verificar_se_email_e_password_estao_em_branco(request, email, password):
 
 
 def login(request):
+    '''
+    Realiza login no sistema.
+    :param request: requisião HTTP.
+    :return: redirect('login') ou redirect('dashboard') ou render(request, 'usuarios/login.html')
+    '''
     if request.method == 'POST':
         email = request.POST['email']
         password = request.POST['senha']
@@ -122,6 +134,11 @@ def login(request):
 
 
 def dashboard(request):
+    '''
+    Permite que o usuário autenticado acesse o sistema.
+    :param request: requisião HTTP.
+    :return: render(request, 'usuarios/dashboard.html', context=context) ou redirect('login').
+    '''
     if request.user.is_authenticated:
         id = request.user.id
         receitas = Receita.objects.order_by('-data_receita').filter(pessoa=id)
@@ -134,6 +151,11 @@ def dashboard(request):
 
 
 def logout(request):
+    '''
+    Realiza o logout do usuário do sistema.
+    :param request: requisião HTTP.
+    :return: redirect('index')
+    '''
     auth.logout(request)
     return redirect('index')
 
