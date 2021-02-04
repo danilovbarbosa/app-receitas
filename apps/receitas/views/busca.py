@@ -4,6 +4,11 @@ from receitas.models import Receita
 
 
 def busca(request):
+    '''
+    Busca receitas de acordo com a string informada no formulário.
+    :param request: requisição HTTP.
+    :return: render(request, 'receitas/buscar.html', context=context)
+    '''
     lista_receitas = Receita.objects.order_by('-data_receita').filter(publicada=True)
 
     if 'buscar' in request.GET:
